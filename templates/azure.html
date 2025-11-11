@@ -48,13 +48,13 @@
   <h1>Chatgpt</h1>
   <form method="post" action="/ask">
     <input type="text" name="question" placeholder="請輸入中文或英文單字" value="{{ question or '' }}" required />
-    <button type="submit">翻譯</button>
+    <button type="submit">回答</button>
   </form>
 
   {% if question %}
   <div class="result">
     <strong>你輸入的單字：</strong> {{ question }}<br>
-    <strong>翻譯結果：</strong> {{ answer }}
+    <strong>回答結果：</strong> {{ answer }}
   </div>
   {% endif %}
 
