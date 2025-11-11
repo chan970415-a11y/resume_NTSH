@@ -77,3 +77,65 @@ def ai():
 
 if __name__ == '__main__':
     app.run(debug=True)
+# 輸入
+import os, openai, requests
+
+# Set up your OpenAI API key and endpoint
+open_ai_api_key = os.getenv('OpenAI_API_KEY')
+open_ai_endpoint = os.getenv('OpenAI_ENDPOINT')
+deployment_name = os.getenv('OpenAI_DEPLOY_NAME')
+
+openai.api_base = open_ai_endpoint
+
+# Set the headers for the request
+headers = {
+"Content-Type": "application/json",
+"api-key": open_ai_api_key,
+}
+
+# 函數_連接Chatgpt
+def Chatgpt_response(prompt):
+# Define the payload for the request
+# You can modify the system message and the user prompt as needed
+payload = {
+"model": "o1-mini",
+"messages": [
+#{"role": "system", "content": "You are a helpful assistant."}, # Context setting
+{"role": "user", "content": prompt} # Replace with your actual prompt
+],
+# "temperature": 0.7, # Modify this value to adjust the creativity level of the model
+"max_completion_tokens": 1000, # Control the length of the response
+"top_p": 1.0,
+"frequency_penalty": 0.0,
+"presence_penalty": 0.0
+}
+
+# Send the request to OpenAI's API
+# Note: This uses the Azure OpenAI endpoint format, ensure your endpoint is correct.
+response = requests.post(open_ai_endpoint, headers=headers, json=payload)
+
+# Check if the request was successful
+if response.status_code == 200:
+# Parse and print the response from GPT
+result = response.json()
+# This structure assumes a successful response from the Azure OpenAI API format.
+return result['choices'][0]['message']['content']
+else:
+# Print the error if the request was unsuccessful
+print(f"Error {response.status_code}: {response.text}")
+return f"ChatGPT failed: Error {response.status_code}"
+
+# 網頁_連接Azure OpenAI
+@app.route('/azure', methods=['GET', 'POST'])
+def azure():
+if request.method == 'POST':
+q = request.form['question'] # 從網頁讀取問題
+a = Chatgpt_response(q) # 從Chatgpt取得對應問題的回應
+return render_template('azure.html', question=q, answer=a)
+return render_template('azure.html', question="", answer="")
+
+
+
+# 主程式_app
+if __name__ == "__main__":
+app.run(host='0.0.0.0', port=5000)
