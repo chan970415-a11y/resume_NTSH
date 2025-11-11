@@ -60,8 +60,8 @@ def club():
 @app.route('/ask', methods=['GET', 'POST'])
 def ask_question():
     if request.method == 'POST':
-        q = request.form['question']
-        a = questions_answers[q]
+        q = request.form['question'] # 從網頁讀取問題
+        a = questions_answers[q] # 從題庫找對應問題的答案
         return render_template('ask.html', question=q, answer=a)
     return render_template('ask.html', question="", answer="")
 
